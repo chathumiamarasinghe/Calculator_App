@@ -1,0 +1,36 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.cal_new">
+
+    <application
+        android:label="cal_new"
+        android:icon="@mipmap/ic_launcher"> <!-- Correct icon placement -->
+
+        <!-- MainActivity setup -->
+        <activity
+            android:name=".MainActivity" <!-- No need for full package path if it's in the same package -->
+        android:exported="true">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN"/>
+            <category android:name="android.intent.category.LAUNCHER"/>
+        </intent-filter>
+
+        <!-- Meta-data for Flutter embedding -->
+        <meta-data
+            android:name="io.flutter.embedding.android.NormalTheme"
+            android:resource="@style/NormalTheme" />
+        <meta-data
+            android:name="flutterEmbedding"
+            android:value="2" />
+    </activity>
+
+</application>
+
+    <!-- Queries for text processing (optional) -->
+<queries>
+<intent>
+    <action android:name="android.intent.action.PROCESS_TEXT"/>
+    <data android:mimeType="text/plain"/>
+</intent>
+</queries>
+
+    </manifest>
