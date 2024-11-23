@@ -1,6 +1,8 @@
+//IM/2021/030
 import 'package:flutter/material.dart';
 
 import 'button_value.dart';
+import 'dart:math';
 
 class CalculatorScreen extends StatefulWidget {
   const CalculatorScreen({super.key});
@@ -42,9 +44,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
             Wrap(
               children: Btn.buttonValues
                   .map((value) => SizedBox(
-                        width: value == Btn.n0
-                            ? screenSize.width / 2
-                            : (screenSize.width / 4),
+                        width: screenSize.width / 4,
                         height: screenSize.width / 5,
                         child: buildButton(value),
                       ))
@@ -90,7 +90,8 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
       Btn.divide,
       Btn.del,
       Btn.clr,
-      Btn.per
+      Btn.per,
+      Btn.sqrt
     ].contains(value)
         ? Colors.orange
         : Colors.white;
@@ -116,6 +117,10 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
       calculate();
       return;
     }
+    if (value == Btn.sqrt) {
+      calculateSquareRoot();
+      return;
+    }
     appendvalue(value);
   }
 
@@ -139,6 +144,12 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
         result = num1 * num2;
         break;
       case Btn.divide:
+        if (num2 == 0) {
+          setState(() {
+            number1 = "Can't divide by zero";
+          });
+          return;
+        }
         result = num1 / num2;
         break;
       default:
@@ -196,20 +207,54 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
         calculate();
       }
       operand = value;
-    } else if (number1.isEmpty || operand.isEmpty) {
-      if (value == Btn.dot && number1.contains(Btn.dot)) return;
+    } else if (operand.isEmpty) {
+      if (value == Btn.dot && number1.contains(Btn.dot)) {
+        return;
+      }
       if (value == Btn.dot && (number1.isEmpty || number1 == Btn.dot)) {
         value = "0.";
       }
       number1 += value;
-    } else if (number2.isEmpty || operand.isEmpty) {
-      if (value == Btn.dot && number2.contains(Btn.dot)) return;
+    } else if (operand.isNotEmpty && number2.isEmpty) {
+      if (value == Btn.dot && number2.contains(Btn.dot)) {
+        return;
+      }
       if (value == Btn.dot && (number2.isEmpty || number2 == Btn.dot)) {
         value = "0.";
       }
       number2 += value;
+    } else if (number1.isNotEmpty && operand.isNotEmpty && number2.isNotEmpty) {
+      if (int.tryParse(value) != null || value == Btn.dot) {
+        return;
+      }
+      operand = value;
     }
+
     setState(() {});
+  }
+
+  void calculateSquareRoot() {
+    if (number1.isEmpty) return;
+
+    final double num = double.parse(number1);
+
+    if (num < 0) {
+      setState(() {
+        number1 = "Error";
+      });
+      return;
+    }
+
+    setState(() {
+      number1 = "${sqrt(num)}";
+
+      if (number1.endsWith(".0")) {
+        number1 = number1.substring(0, number1.length - 2);
+      }
+
+      operand = "";
+      number2 = "";
+    });
   }
 
   Color getBtnColor(value) {

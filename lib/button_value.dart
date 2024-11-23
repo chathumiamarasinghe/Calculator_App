@@ -1,3 +1,4 @@
+//IM/2021/030
 class Btn {
   static const String del = "⌫";
   static const String clr = "C";
@@ -11,6 +12,7 @@ class Btn {
 
   static const String n0 = "0";
   static const String n1 = "1";
+  static const String sqrt = "√";
   static const String n2 = "2";
   static const String n3 = "3";
   static const String n4 = "4";
@@ -39,6 +41,7 @@ class Btn {
     add,
     n0,
     dot,
+    sqrt,
     calculate,
   ];
 }
