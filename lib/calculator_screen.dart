@@ -145,9 +145,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
         break;
       case Btn.divide:
         if (num2 == 0) {
-          setState(() {
-            number1 = "Can't divide by zero";
-          });
+          showErrorDialog("Can't divide by zero");
           return;
         }
         result = num1 / num2;
@@ -176,7 +174,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
 
     final number = double.parse(number1);
     setState(() {
-      number1 = "${(number / 100)}";
+      number1 = "${(number / 100)}%";
       operand = "";
       number2 = "";
     });
@@ -215,7 +213,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
         value = "0.";
       }
       number1 += value;
-    } else if (operand.isNotEmpty && number2.isEmpty) {
+    } else if (operand.isNotEmpty) {
       if (value == Btn.dot && number2.contains(Btn.dot)) {
         return;
       }
@@ -223,11 +221,6 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
         value = "0.";
       }
       number2 += value;
-    } else if (number1.isNotEmpty && operand.isNotEmpty && number2.isNotEmpty) {
-      if (int.tryParse(value) != null || value == Btn.dot) {
-        return;
-      }
-      operand = value;
     }
 
     setState(() {});
@@ -236,14 +229,12 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   void calculateSquareRoot() {
     if (number1.isEmpty) return;
 
-    final double num = double.parse(number1);
-
-    if (num < 0) {
-      setState(() {
-        number1 = "Error";
-      });
+    if (number1.startsWith("-")) {
+      showErrorDialog("Can't calculate square root for negative values.");
       return;
     }
+
+    final double num = double.parse(number1);
 
     setState(() {
       number1 = "${sqrt(num)}";
@@ -255,6 +246,24 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
       operand = "";
       number2 = "";
     });
+  }
+
+  void showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Error"),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text("OK"),
+          ),
+        ],
+      ),
+    );
   }
 
   Color getBtnColor(value) {
