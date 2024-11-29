@@ -1,8 +1,7 @@
-//IM/2021/030
 import 'package:flutter/material.dart';
+import 'dart:math';
 
 import 'button_value.dart';
-import 'dart:math';
 
 class CalculatorScreen extends StatefulWidget {
   const CalculatorScreen({super.key});
@@ -15,6 +14,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   String number1 = "";
   String operand = "";
   String number2 = "";
+  bool calculationPerformed = false;
 
   @override
   Widget build(BuildContext context) {
@@ -117,17 +117,17 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
       calculate();
       return;
     }
+
     if (value == Btn.sqrt) {
       calculateSquareRoot();
       return;
     }
+
     appendvalue(value);
   }
 
   void calculate() {
-    if (number1.isEmpty) return;
-    if (operand.isEmpty) return;
-    if (number2.isEmpty) return;
+    if (number1.isEmpty || operand.isEmpty || number2.isEmpty) return;
 
     final double num1 = double.parse(number1);
     final double num2 = double.parse(number2);
@@ -151,16 +151,17 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
         result = num1 / num2;
         break;
       default:
+        return;
     }
-    setState(() {
-      number1 = "$result";
 
+    setState(() {
+      number1 = result.toString();
       if (number1.endsWith(".0")) {
         number1 = number1.substring(0, number1.length - 2);
       }
-
       operand = "";
       number2 = "";
+      calculationPerformed = true; // Set the flag after calculation
     });
   }
 
@@ -185,6 +186,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
       number1 = "";
       operand = "";
       number2 = "";
+      calculationPerformed = false; // Reset the flag
     });
   }
 
@@ -200,12 +202,24 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   }
 
   void appendvalue(String value) {
+    if (calculationPerformed) {
+      // Reset only when starting a new calculation
+      if (int.tryParse(value) != null || value == Btn.dot) {
+        number1 = "";
+        operand = "";
+        number2 = "";
+        calculationPerformed = false; // Reset the flag
+      }
+    }
+
     if (value != Btn.dot && int.tryParse(value) == null) {
+      // Handle operator input
       if (operand.isNotEmpty && number2.isNotEmpty) {
         calculate();
       }
       operand = value;
     } else if (operand.isEmpty) {
+      // Handle input for number1
       if (value == Btn.dot && number1.contains(Btn.dot)) {
         return;
       }
@@ -214,6 +228,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
       }
       number1 += value;
     } else if (operand.isNotEmpty) {
+      // Handle input for number2
       if (value == Btn.dot && number2.contains(Btn.dot)) {
         return;
       }
@@ -237,14 +252,13 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     final double num = double.parse(number1);
 
     setState(() {
-      number1 = "${sqrt(num)}";
-
+      number1 = sqrt(num).toString();
       if (number1.endsWith(".0")) {
         number1 = number1.substring(0, number1.length - 2);
       }
-
       operand = "";
       number2 = "";
+      calculationPerformed = true; // Set the flag
     });
   }
 
