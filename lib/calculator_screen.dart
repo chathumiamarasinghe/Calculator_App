@@ -1,11 +1,12 @@
+//IM/2021/030
 import 'package:flutter/material.dart';
 import 'dart:math';
-
-import 'button_value.dart';
+import 'buttons.dart';
 
 class CalculatorScreen extends StatefulWidget {
   const CalculatorScreen({super.key});
 
+  //managing the calculator's logic and UI updates
   @override
   State<CalculatorScreen> createState() => _CalculatorScreenState();
 }
@@ -15,14 +16,25 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   String operand = "";
   String number2 = "";
   bool calculationPerformed = false;
+  List<String> history = [];
 
   @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
+    final screenSize = MediaQuery.of(context).size; // For responsive design
     return Scaffold(
+      appBar: AppBar(
+        title: Container(),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.history),
+            onPressed: _showHistory,
+          ),
+        ],
+      ),
       body: SafeArea(
         bottom: false,
         child: Column(
+          // Allows scrolling if the content overflows
           children: [
             Expanded(
               child: SingleChildScrollView(
@@ -82,6 +94,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     );
   }
 
+  //text color based on the button type
   Color getTextColor(String value) {
     return [
       Btn.add,
@@ -97,6 +110,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
         : Colors.white;
   }
 
+  //button tap logics
   void onBtnTap(String value) {
     if (value == Btn.del) {
       delete();
@@ -133,6 +147,8 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     final double num2 = double.parse(number2);
 
     var result = 0.0;
+    String equation = "$number1$operand$number2";
+
     switch (operand) {
       case Btn.add:
         result = num1 + num2;
@@ -161,7 +177,9 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
       }
       operand = "";
       number2 = "";
-      calculationPerformed = true; // Set the flag after calculation
+
+      history.add("$equation = $result");
+      calculationPerformed = true;
     });
   }
 
@@ -169,15 +187,22 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     if (number1.isNotEmpty && operand.isNotEmpty && number2.isNotEmpty) {
       calculate();
     }
+
     if (operand.isNotEmpty) {
       return;
     }
 
     final number = double.parse(number1);
+    double result = number / 100;
+
     setState(() {
-      number1 = "${(number / 100)}%";
+      number1 = "$result%";
       operand = "";
       number2 = "";
+
+      calculationPerformed = true;
+
+      history.add("$number% = $result");
     });
   }
 
@@ -186,7 +211,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
       number1 = "";
       operand = "";
       number2 = "";
-      calculationPerformed = false; // Reset the flag
+      calculationPerformed = false;
     });
   }
 
@@ -203,23 +228,20 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
 
   void appendvalue(String value) {
     if (calculationPerformed) {
-      // Reset only when starting a new calculation
       if (int.tryParse(value) != null || value == Btn.dot) {
         number1 = "";
         operand = "";
         number2 = "";
-        calculationPerformed = false; // Reset the flag
+        calculationPerformed = false;
       }
     }
 
     if (value != Btn.dot && int.tryParse(value) == null) {
-      // Handle operator input
       if (operand.isNotEmpty && number2.isNotEmpty) {
         calculate();
       }
       operand = value;
     } else if (operand.isEmpty) {
-      // Handle input for number1
       if (value == Btn.dot && number1.contains(Btn.dot)) {
         return;
       }
@@ -228,7 +250,6 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
       }
       number1 += value;
     } else if (operand.isNotEmpty) {
-      // Handle input for number2
       if (value == Btn.dot && number2.contains(Btn.dot)) {
         return;
       }
@@ -250,19 +271,29 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     }
 
     final double num = double.parse(number1);
+    double result = sqrt(num);
 
     setState(() {
-      number1 = sqrt(num).toString();
+      number1 = result.toString();
       if (number1.endsWith(".0")) {
         number1 = number1.substring(0, number1.length - 2);
       }
       operand = "";
       number2 = "";
-      calculationPerformed = true; // Set the flag
+
+      history.add("√$num = $result");
+      calculationPerformed = true;
     });
   }
 
   void showErrorDialog(String message) {
+    setState(() {
+      number1 = "";
+      operand = "";
+      number2 = "";
+      calculationPerformed = false;
+    });
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -274,6 +305,31 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
               Navigator.of(context).pop();
             },
             child: const Text("OK"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showHistory() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Calculation History"),
+        content: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: history.isEmpty
+                ? [const Text("No history available.")]
+                : history.map((entry) => Text(entry)).toList(),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text("Close"),
           ),
         ],
       ),
