@@ -1,7 +1,7 @@
 //IM/2021/030
 import 'package:flutter/material.dart';
 import 'dart:math';
-import 'button_value.dart';
+import 'buttons.dart';
 
 class CalculatorScreen extends StatefulWidget {
   const CalculatorScreen({super.key});
@@ -26,7 +26,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
         title: Container(),
         actions: [
           IconButton(
-            icon: const Icon(Icons.history),
+            icon: const Icon(Icons.event_note),
             onPressed: _showHistory,
           ),
         ],
@@ -196,7 +196,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     double result = number / 100;
 
     setState(() {
-      number1 = "$result%";
+      number1 = "$result";
       operand = "";
       number2 = "";
 
@@ -233,6 +233,12 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
         operand = "";
         number2 = "";
         calculationPerformed = false;
+      } else if (value != Btn.dot && int.tryParse(value) == null) {
+        operand = value;
+        number2 = "";
+        calculationPerformed = false;
+        setState(() {});
+        return;
       }
     }
 
