@@ -54,7 +54,11 @@ A modern and feature-rich calculator app built using **Flutter**. This app provi
 - State Management: Handles user input, operations, and results dynamically.
 - Error Handling: Displays error dialogs for invalid inputs.
 
-## Screenshots  
+## Videos & Screenshots  
+
+[![Watch the video](https://img.youtube.com/vi/pMAypgSiX2c/0.jpg)](https://youtu.be/pMAypgSiX2c?si=LlZOh8dwJUr-t2jk)
+[![Watch the short video](https://img.youtube.com/vi/2AJ1hbyLyNM/0.jpg)](https://youtube.com/shorts/2AJ1hbyLyNM?si=GOkP8KaXszKtrFiV)
+
 
 ### Home Screen  
 <img src="https://github.com/user-attachments/assets/9e13bf33-5619-48ab-9ed1-f9fd563fa93d" alt="Home Screen" width="200"/>  
