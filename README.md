@@ -56,7 +56,12 @@ A modern and feature-rich calculator app built using **Flutter**. This app provi
 
 ## Videos & Screenshots  
 
+### Feature Demo Video - ios video
+
 [![Watch the video](https://img.youtube.com/vi/pMAypgSiX2c/0.jpg)](https://youtu.be/pMAypgSiX2c?si=LlZOh8dwJUr-t2jk)
+
+### Feature Demo Video - Android video
+
 [![Watch the short video](https://img.youtube.com/vi/2AJ1hbyLyNM/0.jpg)](https://youtube.com/shorts/2AJ1hbyLyNM?si=GOkP8KaXszKtrFiV)
 
 
